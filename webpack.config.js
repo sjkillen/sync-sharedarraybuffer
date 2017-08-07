@@ -10,7 +10,7 @@ module.exports = {
         extensions: [".ts", ".js"]
     },
     output: {
-        library: pack.name,
+        library: "Cephalopod",
         libraryTarget: "umd",
         filename: `lib.js`,
         path: path.resolve(__dirname, `dist`)

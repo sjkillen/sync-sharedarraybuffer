@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["sync-sharedarraybuffer"] = factory();
+		exports["Cephalopod"] = factory();
 	else
-		root["sync-sharedarraybuffer"] = factory();
+		root["Cephalopod"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -79,7 +79,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 
-console.log("Hello world");
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(1));
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Mutex {
+    foo() {
+        return true;
+    }
+}
+exports.Mutex = Mutex;
 
 
 /***/ })
