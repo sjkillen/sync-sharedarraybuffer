@@ -94,10 +94,11 @@ __export(__webpack_require__(1));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Mutex {
-    foo() {
-        return true;
+    constructor(buff, offset) {
+        this.view = new Int32Array(buff, offset, Mutex.sizeof);
     }
 }
+Mutex.sizeof = 0;
 exports.Mutex = Mutex;
 
 
