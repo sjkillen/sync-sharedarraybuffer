@@ -1,0 +1,33 @@
+{
+  "name": "sync-sharedarraybuffer",
+  "version": "1.0.0",
+  "description": "A collection of synchronization primitives for use with SharedArrayBuffer and Atomics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spensaur-K/sync-sharedarraybuffer.git"
+  },
+  "keywords": [
+    "sync"
+  ],
+  "engines": {
+    "node": ">=8.2.1"
+  },
+  "contributors": [
+    "Spencer Killen",
+    "Tobias Renwick"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Spensaur-K/sync-sharedarraybuffer/issues"
+  },
+  "homepage": "https://github.com/Spensaur-K/sync-sharedarraybuffer#readme",
+  "devDependencies": {
+    "ts-loader": "^2.3.2",
+    "typescript": "^2.4.2",
+    "webpack": "^3.4.1"
+  }
+}

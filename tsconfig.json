@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "es6",
+        "noUnusedLocals": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "strict": true,
+        "noUnusedParameters": true
+    },
+    "files": [
+        "src/main.ts"
+    ]
+}
