@@ -30,6 +30,7 @@ export class Mutex {
       throw new Error("Attempt to unlock mutex that is not owned by thread")
     }
     Atomics.store(this.state, 0, State.unlocked);
+    Atomics.wake(this.state, 0, 1)
   }
   tryLock(): boolean {
     const old = Atomics.compareExchange(this.state, 0, State.unlocked, State.locked);
