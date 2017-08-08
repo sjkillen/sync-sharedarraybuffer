@@ -15,6 +15,7 @@ export class Mutex {
     if (old == State.unlocked) {
       return true;
     } else {
+      console.log("Im waiting")
       Atomics.wait(this.state, 0, State.locked);
     }
   }
@@ -22,6 +23,7 @@ export class Mutex {
 
 unlock() {
   Atomics.store(this.state, 0, State.unlocked);
+  Atomics.wake(this.state, 0, 1)
 }
 tryLock(): boolean {
   const old = Atomics.compareExchange(this.state, 0, State.unlocked, State.locked);
