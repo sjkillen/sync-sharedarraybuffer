@@ -34,6 +34,9 @@ export class Mutex {
     Atomics.wake(this.state, 0, 1)
   }
   tryLock(): boolean {
+    if (this.isOwner) {
+      throw new Error("Thread tried to lock mutex twice");
+    }
     const old = Atomics.compareExchange(this.state, 0, State.unlocked, State.locked);
     if (old == State.unlocked) {
       return true;

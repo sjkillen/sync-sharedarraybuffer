@@ -46,10 +46,7 @@ describe("Testing Mutex Functionality", function () {
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
-    setup("grabLock", {
-      sab: sab,
-      numIter: numIter
-    }, 1).then(
+    setup("grabLock", sab).then(
       () => setup("falseUnlock", {
         sab: sab,
         numIter: numIter
@@ -58,10 +55,29 @@ describe("Testing Mutex Functionality", function () {
       .then(() => done(new Error("Invalid unlock did not throw")))
       .catch(() => done())
   })
+
+  it('gets try lock', function (done) {
+    const sab = new SharedArrayBuffer(1024);
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+    setup("tryLock", sab)
+    .then(() => done())
+    .catch(() => done(new Error("Try lock failed")))
+  })
+
+  it(`doesn't get try lock when already locked`, function (done) {
+    const sab = new SharedArrayBuffer(1024);
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+    setup("grabLock", sab)
+    .then(() => setup("tryLock", sab))
+    .then(() => done(new Error("try lock succeeded")))
+    .catch(() => done())
+  })
 });
 
 
-function setup(test, sab, numWorkers) {
+function setup(test, sab, numWorkers = 1) {
   const workers = []
   let finished = 0
   return new Promise((resolve, reject) => {
@@ -80,6 +96,8 @@ function setup(test, sab, numWorkers) {
           }
         } else if (msg.data === "fail") {
           reject();
+        } else {
+          throw new Error("Invalid message from thread");
         }
       })
     }
