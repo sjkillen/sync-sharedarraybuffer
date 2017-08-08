@@ -1,5 +1,17 @@
 self.importScripts("/dist/lib.js")
 const commands = {
+  grabLock({sab, numIter}) {
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+    m.lock();
+    self.postMessage("done")
+  },
+  falseUnlock({sab, numIter}) {
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+    m.unlock();
+    self.postMessage("done")
+  },
   incrementTest({sab, numIter}) {
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
