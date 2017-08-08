@@ -6,7 +6,7 @@ describe("Testing Mutex", function() {
   const numIter = 500000/numWorkers
 
   it("Increment Test", function (done) {
-    this.timeout(20000);
+    this.timeout(2000);
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
@@ -23,13 +23,13 @@ describe("Testing Mutex", function() {
     )
   })
 
+//expects a failure to be caused by a race conditino between workers.
+//if failure does not occurr, number of workers, or number of iterations may be insufficient
+//to cause race condition. Try increasing numIter.
   it("Increment Expects Failure", function (done) {
-    this.timeout(20000);
+    this.timeout(2000);
     const sab = new SharedArrayBuffer(1024);
-    const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
-
-
     setup("incrementFail",{sab: sab, numIter: numIter}, numWorkers).then(
       () => {
         try {
