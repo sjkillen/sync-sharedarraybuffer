@@ -1,11 +1,11 @@
-describe("Testing Mutex", function() {
+describe("Testing Mutex Functionality", function() {
   const {
     expect
   } = chai;
   const numWorkers = 10;
   const numIter = 500000/numWorkers
 
-  it("Increment Test", function (done) {
+  it(`Increments to ${numIter} using ${numWorkers} workers`, function (done) {
     this.timeout(2000);
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
@@ -13,33 +13,23 @@ describe("Testing Mutex", function() {
 
     setup("incrementTest",{sab: sab, numIter: numIter}, numWorkers).then(
       () => {
-        try {
           expect(heap[1]).to.equal(numIter * numWorkers);
-          done();
-        } catch (e) {
-          done(e)
-        }
       }
-    )
+    ).then(done).catch(done)
   })
 
 //expects a failure to be caused by a race conditino between workers.
 //if failure does not occurr, number of workers, or number of iterations may be insufficient
 //to cause race condition. Try increasing numIter.
-  it("Increment Expects Failure", function (done) {
+  it(`Fails without locks`, function (done) {
     this.timeout(2000);
     const sab = new SharedArrayBuffer(1024);
     const heap = new Int32Array(sab);
     setup("incrementFail",{sab: sab, numIter: numIter}, numWorkers).then(
       () => {
-        try {
-          expect(heap[1]).not.to.equal(numIter * numWorkers);
-          done();
-        } catch (e) {
-          done(e)
-        }
+          expect(heap[1]).not.to.equal(numIter *100 * numWorkers);
       }
-    )
+    ).then(done).catch(done)
   })
 
 
