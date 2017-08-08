@@ -106,12 +106,14 @@ class Mutex {
                 return true;
             }
             else {
+                console.log("Im waiting");
                 Atomics.wait(this.state, 0, 1 /* locked */);
             }
         }
     }
     unlock() {
         Atomics.store(this.state, 0, 0 /* unlocked */);
+        Atomics.wake(this.state, 0, 1);
     }
     tryLock() {
         const old = Atomics.compareExchange(this.state, 0, 0 /* unlocked */, 1 /* locked */);

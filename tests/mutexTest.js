@@ -18,6 +18,7 @@ describe("Testing Mutex", function() {
           expect(heap[1]).to.equal(2000000);
           done();
         } catch (e) {
+          console.log(heap[1])
           done(e)
         }
       }
