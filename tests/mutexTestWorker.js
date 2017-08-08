@@ -9,6 +9,13 @@ const commands = {
       m.unlock();
     }
     self.postMessage("done")
+  },
+  incrementFail({sab, numIter}) {
+    const heap = new Int32Array(sab);
+    for (x = 0; x<numIter*100; x++) { //needs to increase the workload to offset the lack of mutex grabbing to ensure context switching
+      heap[1]++;
+    }
+    self.postMessage("done")
   }
 }
 

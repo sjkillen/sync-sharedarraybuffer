@@ -2,15 +2,14 @@ describe("Testing Mutex", function() {
   const {
     expect
   } = chai;
-
+  const numWorkers = 10;
+  const numIter = 500000/numWorkers
 
   it("Increment Test", function (done) {
     this.timeout(20000);
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
-    const numWorkers = 1;
-    const numIter = 1000000/numWorkers
 
     setup("incrementTest",{sab: sab, numIter: numIter}, numWorkers).then(
       () => {
@@ -23,7 +22,29 @@ describe("Testing Mutex", function() {
       }
     )
   })
+
+  it("Increment Expects Failure", function (done) {
+    this.timeout(20000);
+    const sab = new SharedArrayBuffer(1024);
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+
+
+    setup("incrementFail",{sab: sab, numIter: numIter}, numWorkers).then(
+      () => {
+        try {
+          expect(heap[1]).not.to.equal(numIter * numWorkers);
+          done();
+        } catch (e) {
+          done(e)
+        }
+      }
+    )
+  })
+
+
 });
+
 
 function setup(test, sab, numWorkers) {
   const workers = []
