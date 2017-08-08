@@ -9,8 +9,12 @@ const commands = {
   falseUnlock({sab, numIter}) {
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
-    m.unlock();
-    self.postMessage("done")
+    try {
+      m.unlock();
+      self.postMessage("done");
+    } catch(e) {
+      self.postMessage("fail");
+    }
   },
   incrementTest({sab, numIter}) {
     const m = new Cephalopod.Mutex(sab, 0);
