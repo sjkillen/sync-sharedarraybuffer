@@ -9,16 +9,15 @@ describe("Testing Mutex", function() {
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
     const heap = new Int32Array(sab);
-    console.log(heap.length)
+    const numWorkers = 1;
+    const numIter = 1000000/numWorkers
 
-    setup("incrementTest", sab, 2).then(
+    setup("incrementTest",{sab: sab, numIter: numIter}, numWorkers).then(
       () => {
-        console.log(heap[1])
         try {
-          expect(heap[1]).to.equal(2000000);
+          expect(heap[1]).to.equal(numIter * numWorkers);
           done();
         } catch (e) {
-          console.log(heap[1])
           done(e)
         }
       }
@@ -38,11 +37,9 @@ function setup(test, sab, numWorkers) {
       });
       workers.push(nw);
       nw.addEventListener("message", msg => {
-        console.log("Clinet message")
         if (msg.data === "done") {
           finished++;
           if (finished == numWorkers) {
-            console.log("done done")
             resolve();
           }
         }

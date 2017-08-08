@@ -100,18 +100,25 @@ class Mutex {
         this.state = new Int32Array(buff, offset, 1);
     }
     lock() {
+        if (this.isOwner) {
+            throw new Error("Thread tried to lock mutex twice");
+        }
         for (;;) {
             const old = Atomics.compareExchange(this.state, 0, 0 /* unlocked */, 1 /* locked */);
             if (old == 0 /* unlocked */) {
-                return true;
+                this.isOwner = true;
+                return;
             }
             else {
-                console.log("Im waiting");
                 Atomics.wait(this.state, 0, 1 /* locked */);
             }
         }
     }
     unlock() {
+        if (!this.isOwner) {
+            throw new Error("Attempt to unlock mutex that is not owned by thread");
+        }
+        this.isOwner = false;
         Atomics.store(this.state, 0, 0 /* unlocked */);
         Atomics.wake(this.state, 0, 1);
     }
