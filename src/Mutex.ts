@@ -29,6 +29,7 @@ export class Mutex {
     if (!this.isOwner) {
       throw new Error("Attempt to unlock mutex that is not owned by thread")
     }
+    this.isOwner = false;
     Atomics.store(this.state, 0, State.unlocked);
     Atomics.wake(this.state, 0, 1)
   }
