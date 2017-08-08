@@ -95,10 +95,32 @@ __export(__webpack_require__(1));
 Object.defineProperty(exports, "__esModule", { value: true });
 class Mutex {
     constructor(buff, offset) {
-        this.view = new Int32Array(buff, offset, Mutex.sizeof);
+        this.sizeof = 8;
+        // TODO Atomics.isLockFree()?
+        this.state = new Int32Array(buff, offset, 1);
+    }
+    lock() {
+        for (;;) {
+            const old = Atomics.compareExchange(this.state, 0, 0 /* unlocked */, 1 /* locked */);
+            if (old == 0 /* unlocked */) {
+                return true;
+            }
+            else {
+                Atomics.wait(this.state, 0, 1 /* locked */);
+            }
+        }
+    }
+    unlock() {
+        Atomics.store(this.state, 0, 0 /* unlocked */);
+    }
+    tryLock() {
+        const old = Atomics.compareExchange(this.state, 0, 0 /* unlocked */, 1 /* locked */);
+        if (old == 0 /* unlocked */) {
+            return true;
+        }
+        return false;
     }
 }
-Mutex.sizeof = 0;
 exports.Mutex = Mutex;
 
 

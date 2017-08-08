@@ -1,9 +1,18 @@
-self.addEventListener("message", msg => {
-    console.log("Message recieved");
-    const heap = new Int32Array(msg.data.buff);
-    setInterval(() => console.log("Data is", heap[0]), 1000);
-});
-
-self.onmessage = () => {
-    console.log("Work Work");
+self.importScripts("/dist/lib.js")
+const commands = {
+  incrementTest(sab) {
+    const m = new Cephalopod.Mutex(sab, 0);
+    const heap = new Int32Array(sab);
+    console.log("im starting")
+    for (x = 0; x<1000000; x++) {
+      m.lock();
+      heap[1]++;
+      m.unlock();
+    }
+    console.log("Im done");
+  }
 }
+
+self.addEventListener("message", msg => {
+  commands[msg.data.command](msg.data.data)
+});
