@@ -4,27 +4,48 @@ describe("Testing Mutex", function() {
   } = chai;
 
 
-  it("Increment Test", done => {
+  it("Increment Test", function (done) {
+    this.timeout(20000);
     const sab = new SharedArrayBuffer(1024);
     const m = new Cephalopod.Mutex(sab, 0);
-    setup("incrementTest", sab);
     const heap = new Int32Array(sab);
     console.log(heap.length)
-    setTimeout(
+
+    setup("incrementTest", sab, 2).then(
       () => {
-        expect(heap[1]).to.equal(2000000);
         console.log(heap[1])
-        done();
-      }, 5000
+        try {
+          expect(heap[1]).to.equal(2000000);
+          done();
+        } catch (e) {
+          done(e)
+        }
+      }
     )
   })
 });
 
-function setup(test, sab) {
-
-  const worker = new Worker("mutexTestWorker.js");
-  const worker2 = new Worker("mutexTestWorker.js");
-
-  worker.postMessage({ command: test, data: sab });
-  worker2.postMessage({ command: test, data: sab });
+function setup(test, sab, numWorkers) {
+  const workers = []
+  let finished = 0
+  return new Promise((resolve, reject) => {
+    for (x = 0; x < numWorkers; x++) {
+      nw = new Worker("mutexTestWorker.js")
+      nw.postMessage({
+        command: test,
+        data: sab
+      });
+      workers.push(nw);
+      nw.addEventListener("message", msg => {
+        console.log("Clinet message")
+        if (msg.data === "done") {
+          finished++;
+          if (finished == numWorkers) {
+            console.log("done done")
+            resolve();
+          }
+        }
+      })
+    }
+  })
 }

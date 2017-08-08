@@ -9,6 +9,7 @@ const commands = {
       heap[1]++;
       m.unlock();
     }
+    self.postMessage("done")
     console.log("Im done");
   }
 }
