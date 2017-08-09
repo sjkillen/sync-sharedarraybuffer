@@ -3,13 +3,40 @@ const enum State {
    locked
 }
 
+
+/**
+ * Binary mutex that protects a SharedArrayBuffer
+ */
 export class Mutex {
    private state: Int32Array;
    private isOwner: boolean;
+
+   /**
+    * Construct a view of a mutex in a buffer, but doen't initialize it
+    * @param buff to store mutex in
+    * @param offset into buff to store mutex
+    */
    constructor(buff: SharedArrayBuffer, offset: number) {
       // TODO Atomics.isLockFree()?
       this.state = new Int32Array(buff, offset, 1);
    }
+
+   /**
+    * Initializes the mutex to be unlocked
+    * This function doesn't need to be called if the SharedArrayBuffer
+    * being used is zero'd
+    */
+   init() {
+      if (this.isOwner) {
+         throw new Error("Mutex in use, cannot initialize");
+      }
+      this.state[0] = State.unlocked;
+   }
+
+   /**
+    * Obtain the lock, blocks until lock is acquired
+    * Cannot be called on main thread
+    */
    lock() {
       if (this.isOwner) {
          throw new Error("Thread tried to lock mutex twice");
@@ -25,6 +52,10 @@ export class Mutex {
       }
    }
 
+   /**
+    * Release the lock
+    * @throws err if thread does not hold the lock
+    */
    unlock() {
       if (!this.isOwner) {
          throw new Error("Attempt to unlock mutex that is not owned by thread")
@@ -33,6 +64,11 @@ export class Mutex {
       Atomics.store(this.state, 0, State.unlocked);
       Atomics.wake(this.state, 0, 1)
    }
+
+   /**
+    * Attempt to acquire the lock, but returns immediately if lock cannot be obtained
+    * @returns whether lock was aqcuired
+    */
    tryLock(): boolean {
       if (this.isOwner) {
          throw new Error("Thread tried to lock mutex twice");
