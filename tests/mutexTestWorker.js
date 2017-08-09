@@ -34,7 +34,7 @@ const commands = {
    incrementTest({ sab, numIter }) {
       const m = new Cephalopod.Mutex(sab, 0);
       const heap = new Int32Array(sab);
-      for (x = 0; x < numIter; x++) {
+      for (let x = 0; x < numIter; x++) {
          m.lock();
          heap[1]++;
          m.unlock();
@@ -43,7 +43,7 @@ const commands = {
    },
    incrementFail({ sab, numIter }) {
       const heap = new Int32Array(sab);
-      for (x = 0; x < numIter * 100; x++) { //needs to increase the workload to offset the lack of mutex grabbing to ensure context switching
+      for (let x = 0; x < numIter * 100; x++) { //needs to increase the workload to offset the lack of mutex grabbing to ensure context switching
          heap[1]++;
       }
       self.postMessage("done")

@@ -6,8 +6,8 @@
          const workers = []
          let finished = 0
          return new Promise((resolve, reject) => {
-            for (x = 0; x < numWorkers; x++) {
-               nw = new Worker(workerFile)
+            for (let x = 0; x < numWorkers; x++) {
+               const nw = new Worker(workerFile)
                nw.postMessage({
                   command: test,
                   data: sab

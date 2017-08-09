@@ -17,11 +17,9 @@
          setup("incrementTest", {
             sab: sab,
             numIter: numIter
-         }, numWorkers).then(
-            () => {
-               expect(heap[1]).to.equal(numIter * numWorkers);
-            }
-            ).then(done).catch(done)
+         }, numWorkers).then(() => {
+            expect(heap[1]).to.equal(numIter * numWorkers);
+         }).then(done).catch(done)
       })
 
       //expects a failure to be caused by a race conditino between workers.
@@ -46,13 +44,11 @@
          const sab = new SharedArrayBuffer(1024);
          const m = new Cephalopod.Mutex(sab, 0);
          const heap = new Int32Array(sab);
-         setup("grabLock", sab).then(
-            () => setup("falseUnlock", {
-               sab: sab,
-               numIter: numIter
-            }, 1)
-         )
-            .then(() => done(new Error("Invalid unlock did not throw")))
+         setup("grabLock", sab).then(() => setup("falseUnlock", {
+            sab: sab,
+            numIter: numIter
+         }, 1)).then(
+            () => done(new Error("Invalid unlock did not throw")))
             .catch(() => done())
       })
 
