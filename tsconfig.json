@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "target": "esnext",
-        "noUnusedLocals": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "strict": true,
-        "noUnusedParameters": true
-    },
-    "files": [
-        "src/main.ts"
-    ]
+   "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "target": "esnext",
+      "noUnusedLocals": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "strict": true,
+      "noUnusedParameters": true
+   },
+   "files": [
+      "src/main.ts"
+   ]
 }
