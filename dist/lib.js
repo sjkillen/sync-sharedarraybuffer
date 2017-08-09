@@ -80,12 +80,35 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Binary mutex that protects a SharedArrayBuffer
+ */
 class Mutex {
+    /**
+     * Construct a view of a mutex in a buffer, but doen't initialize it
+     * @param buff to store mutex in
+     * @param offset into buff to store mutex
+     */
     constructor(buff, offset) {
         this.sizeof = 4;
         // TODO Atomics.isLockFree()?
         this.state = new Int32Array(buff, offset, 1);
     }
+    /**
+     * Initializes the mutex to be unlocked
+     * This function doesn't need to be called if the SharedArrayBuffer
+     * being used is zero'd
+     */
+    init() {
+        if (this.isOwner) {
+            throw new Error("Mutex in use, cannot initialize");
+        }
+        this.state[0] = 0 /* unlocked */;
+    }
+    /**
+     * Obtain the lock, blocks until lock is acquired
+     * Cannot be called on main thread
+     */
     lock() {
         if (this.isOwner) {
             throw new Error("Thread tried to lock mutex twice");
@@ -101,6 +124,10 @@ class Mutex {
             }
         }
     }
+    /**
+     * Release the lock
+     * @throws err if thread does not hold the lock
+     */
     unlock() {
         if (!this.isOwner) {
             throw new Error("Attempt to unlock mutex that is not owned by thread");
@@ -109,6 +136,10 @@ class Mutex {
         Atomics.store(this.state, 0, 0 /* unlocked */);
         Atomics.wake(this.state, 0, 1);
     }
+    /**
+     * Attempt to acquire the lock, but returns immediately if lock cannot be obtained
+     * @returns whether lock was aqcuired
+     */
     tryLock() {
         if (this.isOwner) {
             throw new Error("Thread tried to lock mutex twice");
@@ -158,27 +189,31 @@ class Semaphore {
         this.mutex.lock();
         this.counter[0] -= 1;
         for (;;) {
-            if (this.counter[0] < 0) {
-                const counter = this.counter[0];
-                this.mutex.unlock();
-                // if this.counter[0] changes in between unlock and wait, wait will not wait
-                Atomics.wait(this.counter, 0, counter);
-            }
-            else {
+            if (this.counter[0] >= 0) {
                 this.mutex.unlock();
                 return;
             }
+            const counter = this.counter[0];
+            this.mutex.unlock();
+            // if this.counter[0] changes in between unlock and wait, wait will not wait
+            Atomics.wait(this.counter, 0, counter);
             this.mutex.lock();
         }
     }
     tryWait() {
         this.mutex.lock();
-        this.counter[0]--;
+        const consumed = this.counter[0] >= 0;
+        if (consumed) {
+            this.counter[0]--;
+        }
         this.mutex.unlock();
-        return true;
-        return false;
+        return consumed;
     }
     post() {
+        this.mutex.lock();
+        this.counter[0]++;
+        this.mutex.unlock();
+        Atomics.wake(this.counter, 0, 1);
     }
 }
 exports.Semaphore = Semaphore;
