@@ -17,30 +17,34 @@ export class Semaphore {
       this.mutex.lock();
       this.counter[0] -= 1;
       for (; ;) {
-         if (this.counter[0] < 0) {
-            const counter = this.counter[0];
-            this.mutex.unlock();
-            // if this.counter[0] changes in between unlock and wait, wait will not wait
-            Atomics.wait(this.counter, 0, counter);
-         } else {
+         if (this.counter[0] >= 0) {
             this.mutex.unlock();
             return;
          }
+         const counter = this.counter[0];
+         this.mutex.unlock();
+         // if this.counter[0] changes in between unlock and wait, wait will not wait
+         Atomics.wait(this.counter, 0, counter);
          this.mutex.lock();
       }
    }
 
    tryWait(): boolean {
       this.mutex.lock();
-      this.counter[0]--;
+      const consumed = this.counter[0] >= 0;
+      if (consumed) {
+         this.counter[0]--;
+      }
       this.mutex.unlock();
-      return true;
-
-      return false;
+      return consumed;
    }
 
    post() {
-
+      this.mutex.lock();
+      this.counter[0]++;
+      this.mutex.unlock();
+      Atomics.wake(this.counter, 0, 1);
    }
+
    readonly sizeof: number;
 }
