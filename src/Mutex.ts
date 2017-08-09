@@ -3,7 +3,6 @@ const enum State {
    locked
 }
 
-
 /**
  * Binary mutex that protects a SharedArrayBuffer
  */
