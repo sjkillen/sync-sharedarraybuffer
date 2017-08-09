@@ -1,3 +1,4 @@
+
 self.importScripts("/dist/lib.js")
 const commands = {
   grabLock(sab) {

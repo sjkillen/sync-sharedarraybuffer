@@ -43,5 +43,5 @@ export class Mutex {
     }
     return false;
   }
-  readonly sizeof = 8;
+  readonly sizeof = 4;
 }

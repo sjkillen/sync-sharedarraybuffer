@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,23 +79,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(1));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 Object.defineProperty(exports, "__esModule", { value: true });
 class Mutex {
     constructor(buff, offset) {
-        this.sizeof = 8;
+        this.sizeof = 4;
         // TODO Atomics.isLockFree()?
         this.state = new Int32Array(buff, offset, 1);
     }
@@ -134,6 +121,67 @@ class Mutex {
     }
 }
 exports.Mutex = Mutex;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(0));
+__export(__webpack_require__(2));
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Mutex_1 = __webpack_require__(0);
+class Semaphore {
+    constructor(buff, offset) {
+        this.counter = new Int32Array(buff, offset, 1);
+        this.mutex = new Mutex_1.Mutex(buff, offset + 4);
+        this.sizeof = this.mutex.sizeof + 4;
+    }
+    init(v) {
+        this.counter[0] = v;
+    }
+    wait() {
+        this.mutex.lock();
+        this.counter[0] -= 1;
+        for (;;) {
+            if (this.counter[0] < 0) {
+                const counter = this.counter[0];
+                this.mutex.unlock();
+                // if this.counter[0] changes in between unlock and wait, wait will not wait
+                Atomics.wait(this.counter, 0, counter);
+            }
+            else {
+                this.mutex.unlock();
+                return;
+            }
+            this.mutex.lock();
+        }
+    }
+    tryWait() {
+        this.mutex.lock();
+        this.counter[0]--;
+        this.mutex.unlock();
+        return true;
+        return false;
+    }
+    post() {
+    }
+}
+exports.Semaphore = Semaphore;
 
 
 /***/ })

@@ -1,30 +1,46 @@
+import { Mutex } from "./Mutex";
+
 export class Semaphore {
-  private sem: Int32Array;
-  private sab: SharedArrayBuffer;
-  private offset: number;
+  private counter: Int32Array;
+  private mutex: Mutex;
   constructor(buff: SharedArrayBuffer, offset: number) {
-    this.sab=buff;
-    this.offset = offset;
+    this.counter = new Int32Array(buff, offset, 1);
+    this.mutex = new Mutex(buff, offset + 4);
+    this.sizeof = this.mutex.sizeof + 4;
   }
 
-  init(limit:number){
-    this.sem = new Int32Array(this.sab, this.offset, limit);
+  init(v: number) {
+    this.counter[0] = v;
   }
 
   wait() {
+    this.mutex.lock();
+    this.counter[0] -= 1;
     for (; ;) {
-      const old = Atomics.sub(this.sem, 0, 1);
-      if (old == State.unlocked) {
-        this.isOwner = true;
-        return;
+      if (this.counter[0] < 0) {
+        const counter = this.counter[0];
+        this.mutex.unlock();
+        // if this.counter[0] changes in between unlock and wait, wait will not wait
+        Atomics.wait(this.counter, 0, counter);
       } else {
-        Atomics.wait(this.state, 0, State.locked);
+        this.mutex.unlock();
+        return;
       }
+      this.mutex.lock();
     }
   }
 
-  post() {
-    Atomics.add(this.sem,this.offset,1);
+  tryWait(): boolean {
+    this.mutex.lock();
+    this.counter[0]--;
+    this.mutex.unlock();
+    return true;
+
+    return false;
   }
-  readonly sizeof = 8;
+
+  post() {
+
+  }
+  readonly sizeof: number;
 }
