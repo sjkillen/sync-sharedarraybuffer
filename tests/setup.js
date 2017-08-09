@@ -1,5 +1,6 @@
 (function () {
    "use strict";
+
    window.getSetup = function (workerFile) {
       return function setup(test, sab, numWorkers = 1) {
          const workers = []
