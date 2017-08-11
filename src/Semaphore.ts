@@ -18,6 +18,7 @@ export class Semaphore {
       this.counter[0] -= 1;
       for (; ;) {
          if (this.counter[0] >= 0) {
+            console.log("unlock")
             this.mutex.unlock();
             return;
          }
@@ -40,8 +41,10 @@ export class Semaphore {
    }
 
    post() {
+      console.log("lock")
       this.mutex.lock();
       this.counter[0]++;
+      console.log("unlock")
       this.mutex.unlock();
       Atomics.wake(this.counter, 0, 1);
    }
