@@ -13,17 +13,16 @@
          const sab = new SharedArrayBuffer(1024);
          const s = new Cephalopod.Semaphore(sab, 0);
          s.init(1);
-         const heap = new Int32Array(sab);
+         const heap = new Int32Array(sab, s.sizeof, 1);
 
          const test = new D.Test();
-         test.setupTask({
+         test.setupTask("incrementTest", {
             sab: sab,
             numIter: numIter
-         }, numWorkers);
-
-         test.then(() => {
-            expect(heap[1]).to.equal(numIter * numWorkers);
-         }).then(done).catch(done).then(() => test.cleanup());
+         }, numWorkers)
+            .then(() => {
+               expect(heap[0]).to.equal(numIter * numWorkers);
+            }).then(done).catch(done).then(() => test.cleanup());
       });
    });
 }())
