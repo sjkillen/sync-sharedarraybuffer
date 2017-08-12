@@ -190,7 +190,6 @@ class Semaphore {
         this.counter[0] -= 1;
         for (;;) {
             if (this.counter[0] >= 0) {
-                console.log("unlock");
                 this.mutex.unlock();
                 return;
             }
@@ -203,18 +202,17 @@ class Semaphore {
     }
     tryWait() {
         this.mutex.lock();
-        const consumed = this.counter[0] >= 0;
-        if (consumed) {
+        console.log(this.counter[0]);
+        const didConsume = this.counter[0] > 0;
+        if (didConsume) {
             this.counter[0]--;
         }
         this.mutex.unlock();
-        return consumed;
+        return didConsume;
     }
     post() {
-        console.log("lock");
         this.mutex.lock();
         this.counter[0]++;
-        console.log("unlock");
         this.mutex.unlock();
         Atomics.wake(this.counter, 0, 1);
     }

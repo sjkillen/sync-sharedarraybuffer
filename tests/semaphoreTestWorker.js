@@ -15,6 +15,15 @@ const commands = {
       } catch (e) {
          self.postMessage("fail");
       }
+   },
+   tryWait(sab) {
+      const s = new Cephalopod.Semaphore(sab, 0);
+
+      if (s.tryWait()) {
+         self.postMessage("done");
+      } else {
+         self.postMessage("fail");
+      }
    }
 }
 
