@@ -31,7 +31,6 @@ export class Semaphore {
 
    tryWait(): boolean {
       this.mutex.lock();
-      console.log(this.counter[0]);
       const didConsume = this.counter[0] > 0;
       if (didConsume) {
          this.counter[0]--;
