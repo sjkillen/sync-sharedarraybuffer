@@ -34,23 +34,25 @@
 
                   const test = new D.Test();
                   test.setupTask("tryWait", sab, 1)
-                        .then(() => test.setupTask("tryWait", sab, 1)
-                              .then(() => done(new Error("tryWait got lock when it should not have")))
-                              .catch(() => done())
-                        )
-                        .catch(() => done(new Error("tryWait did not get lock")))
+                        .then(() => test.setupTask("failTryWait", sab, 1))
+                        .then(() => done())
+                        .catch(() => done(new Error("tryWait failed")))
                         .then(() => test.cleanup())
             });
 
-            it('uses its counter to determine if wait blocks', function () {
-                  this.timeout(2000);
+            it('uses its counter to determine if wait blocks', function (done) {
+                  this.timeout(5000);
+                  const counter = 30;
                   const test = new D.Test;
                   const sab = new SharedArrayBuffer(1024);
                   const s = new Cephalopod.Semaphore(sab, 0);
                   const heap = new Int32Array(sab, s.sizeof, 1);
-                  s.init(1);
-                  test.setupTask("depleteCounter", sab, 20)
-                        .then()
+                  s.init(counter);
+
+                  test.setupTask("tryWait", sab, counter)
+                        .then(() => test.setupTask("failTryWait", sab, 1))
+                        .then(done)
+                        .catch(() => done(new Error))
             });
       });
 }())

@@ -24,6 +24,15 @@ const commands = {
       } else {
          self.postMessage("fail");
       }
+   },
+   failTryWait(sab) {
+      const s = new Cephalopod.Semaphore(sab, 0);
+
+      if (s.tryWait()) {
+         self.postMessage("fail");
+      } else {
+         self.postMessage("done");
+      }
    }
 }
 

@@ -16,7 +16,6 @@ export class Mutex {
     * @param offset into buff to store mutex
     */
    constructor(buff: SharedArrayBuffer, offset: number) {
-      // TODO Atomics.isLockFree()?
       this.state = new Int32Array(buff, offset, 1);
    }
 

@@ -91,7 +91,6 @@ class Mutex {
      */
     constructor(buff, offset) {
         this.sizeof = 4;
-        // TODO Atomics.isLockFree()?
         this.state = new Int32Array(buff, offset, 1);
     }
     /**
