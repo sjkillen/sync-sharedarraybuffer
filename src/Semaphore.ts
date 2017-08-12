@@ -7,6 +7,7 @@ import { Sized } from "./Sized";
 export class Semaphore implements Sized {
    private counter: Int32Array;
    private mutex: Mutex;
+
    constructor(buff: SharedArrayBuffer, offset: number) {
       this.counter = new Int32Array(buff, offset, 1);
       this.mutex = new Mutex(buff, offset + 4);

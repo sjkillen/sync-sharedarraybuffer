@@ -1,5 +1,5 @@
 {
-  "name": "sync-sharedarraybuffer",
+  "name": "cephalopod-sync-sharedarraybuffer",
   "version": "1.0.0",
   "description": "A collection of synchronization primitives for use with SharedArrayBuffer and Atomics",
   "main": "index.js",
