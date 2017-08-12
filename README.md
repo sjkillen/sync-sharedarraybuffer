@@ -1,6 +1,12 @@
 # Cephalopod
 A collection of synchronization primitives for use with SharedArrayBuffer and Atomics
 
+*!Note This module requires Atomics and SharedArrayBuffer. At the time of writing, only Firefox Nightly and Chrome Canary are compatible*
+
+Included primitives (more to come)
+- Mutex (binary)
+- Semaphore
+
 Usage (UMD module)
 
 **CommonJS / Nodejs**
