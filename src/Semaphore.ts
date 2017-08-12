@@ -11,7 +11,6 @@ export class Semaphore implements Sized {
    constructor(buff: SharedArrayBuffer, offset: number) {
       this.counter = new Int32Array(buff, offset, 1);
       this.mutex = new Mutex(buff, offset + 4);
-      this.sizeof = this.mutex.sizeof + 4;
    }
 
    /**
@@ -66,6 +65,6 @@ export class Semaphore implements Sized {
       this.mutex.unlock();
       Atomics.wake(this.counter, 0, 1);
    }
-
-   readonly sizeof: number;
+   static readonly sizeof = Mutex.sizeof + 4;
+   readonly sizeof = Mutex.sizeof + 4;
 }

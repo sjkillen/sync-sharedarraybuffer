@@ -13,7 +13,7 @@ export class Mutex implements Sized {
    private isOwner: boolean;
 
    /**
-    * Construct a view of a mutex in a buffer, but doen't initialize it
+    * Construct a view of a mutex in a buffer
     * @param buff to store mutex in
     * @param offset into buff to store mutex
     */
@@ -79,5 +79,6 @@ export class Mutex implements Sized {
       }
       return false;
    }
-   readonly sizeof = 4;
+   static readonly sizeof = 4;
+   readonly sizeof = Mutex.sizeof;
 }

@@ -85,12 +85,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 class Mutex {
     /**
-     * Construct a view of a mutex in a buffer, but doen't initialize it
+     * Construct a view of a mutex in a buffer
      * @param buff to store mutex in
      * @param offset into buff to store mutex
      */
     constructor(buff, offset) {
-        this.sizeof = 4;
+        this.sizeof = Mutex.sizeof;
         this.state = new Int32Array(buff, offset, 1);
     }
     /**
@@ -150,6 +150,7 @@ class Mutex {
         return false;
     }
 }
+Mutex.sizeof = 4;
 exports.Mutex = Mutex;
 
 
@@ -180,9 +181,9 @@ const Mutex_1 = __webpack_require__(0);
  */
 class Semaphore {
     constructor(buff, offset) {
+        this.sizeof = Mutex_1.Mutex.sizeof + 4;
         this.counter = new Int32Array(buff, offset, 1);
         this.mutex = new Mutex_1.Mutex(buff, offset + 4);
-        this.sizeof = this.mutex.sizeof + 4;
     }
     /**
      * Initialize the semaphore's counter
@@ -234,6 +235,7 @@ class Semaphore {
         Atomics.wake(this.counter, 0, 1);
     }
 }
+Semaphore.sizeof = Mutex_1.Mutex.sizeof + 4;
 exports.Semaphore = Semaphore;
 
 
