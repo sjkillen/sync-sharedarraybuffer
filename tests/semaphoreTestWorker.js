@@ -19,5 +19,5 @@ const commands = {
 }
 
 self.addEventListener("message", msg => {
-   commands[msg.data.command](msg.data.data)
+   commands[msg.data.command](msg.data.data);
 });
