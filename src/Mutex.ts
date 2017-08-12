@@ -1,3 +1,5 @@
+import { Sized } from "./Sized";
+
 const enum State {
    unlocked = 0,
    locked
@@ -6,7 +8,7 @@ const enum State {
 /**
  * Binary mutex that protects a SharedArrayBuffer
  */
-export class Mutex {
+export class Mutex implements Sized {
    private state: Int32Array;
    private isOwner: boolean;
 

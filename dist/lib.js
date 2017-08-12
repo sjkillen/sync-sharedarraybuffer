@@ -175,15 +175,25 @@ __export(__webpack_require__(2));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mutex_1 = __webpack_require__(0);
+/**
+ * Counting semaphore
+ */
 class Semaphore {
     constructor(buff, offset) {
         this.counter = new Int32Array(buff, offset, 1);
         this.mutex = new Mutex_1.Mutex(buff, offset + 4);
         this.sizeof = this.mutex.sizeof + 4;
     }
-    init(v) {
-        this.counter[0] = v;
+    /**
+     * Initialize the semaphore's counter
+     * @param value set semaphore as
+     */
+    init(value) {
+        this.counter[0] = value;
     }
+    /**
+     * Decrement the counter and block if the counter is < 1
+     */
     wait() {
         this.mutex.lock();
         this.counter[0] -= 1;
@@ -199,6 +209,12 @@ class Semaphore {
             this.mutex.lock();
         }
     }
+    /**
+     * Decrement the counter if it is > 0 and return true
+     * otherwise return false
+     * Does not block
+     * @returns whether counter was decremented
+     */
     tryWait() {
         this.mutex.lock();
         const didConsume = this.counter[0] > 0;
@@ -208,6 +224,9 @@ class Semaphore {
         this.mutex.unlock();
         return didConsume;
     }
+    /**
+     * Increment the counter, wake up any waiting threads
+     */
     post() {
         this.mutex.lock();
         this.counter[0]++;

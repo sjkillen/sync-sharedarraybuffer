@@ -1,6 +1,10 @@
 import { Mutex } from "./Mutex";
+import { Sized } from "./Sized";
 
-export class Semaphore {
+/**
+ * Counting semaphore
+ */
+export class Semaphore implements Sized {
    private counter: Int32Array;
    private mutex: Mutex;
    constructor(buff: SharedArrayBuffer, offset: number) {
@@ -9,10 +13,17 @@ export class Semaphore {
       this.sizeof = this.mutex.sizeof + 4;
    }
 
-   init(v: number) {
-      this.counter[0] = v;
+   /**
+    * Initialize the semaphore's counter
+    * @param value set semaphore as
+    */
+   init(value: number) {
+      this.counter[0] = value;
    }
 
+   /**
+    * Decrement the counter and block if the counter is < 1
+    */
    wait() {
       this.mutex.lock();
       this.counter[0] -= 1;
@@ -29,6 +40,12 @@ export class Semaphore {
       }
    }
 
+   /**
+    * Decrement the counter if it is > 0 and return true
+    * otherwise return false
+    * Does not block
+    * @returns whether counter was decremented
+    */
    tryWait(): boolean {
       this.mutex.lock();
       const didConsume = this.counter[0] > 0;
@@ -39,6 +56,9 @@ export class Semaphore {
       return didConsume;
    }
 
+   /**
+    * Increment the counter, wake up any waiting threads
+    */
    post() {
       this.mutex.lock();
       this.counter[0]++;
