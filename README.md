@@ -1,4 +1,9 @@
 # Cephalopod
+
+```sh
+npm install --save cephalopod-sync-sharedarraybuffer
+```
+
 A collection of synchronization primitives for use with SharedArrayBuffer and Atomics
 
 *!Note This module requires Atomics and SharedArrayBuffer. At the time of writing, only Firefox Nightly and Chrome Canary are compatible*
