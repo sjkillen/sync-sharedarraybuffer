@@ -9,6 +9,7 @@ module.exports = {
    resolve: {
       extensions: [".ts", ".js"]
    },
+   mode: "production",
    output: {
       library: "Cephalopod",
       libraryTarget: "umd",

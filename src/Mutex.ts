@@ -10,7 +10,7 @@ const enum State {
  */
 export class Mutex implements Sized {
    private state: Int32Array;
-   private isOwner: boolean;
+   private isOwner: boolean = false;
 
    /**
     * Construct a view of a mutex in a buffer
