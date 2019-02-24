@@ -5,7 +5,7 @@ const path = require('path'),
    pack = require("./package");
 
 module.exports = {
-   entry: './src/main.ts',
+   entry: './src/lib.ts',
    resolve: {
       extensions: [".ts", ".js"]
    },
